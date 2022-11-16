@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import "./styles.scss";
 
-function Layout({ header, children }) {
+function LayoutPage({ header, children }) {
   return (
     <div className="Layout">
       <div className="Layout__header">{header}</div>
@@ -12,9 +12,9 @@ function Layout({ header, children }) {
   );
 }
 
-Layout.propTypes = {
+LayoutPage.propTypes = {
   header: PropTypes.node,
   children: PropTypes.node,
 };
 
-export default Layout;
+export default LayoutPage;
