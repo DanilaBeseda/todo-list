@@ -2,21 +2,26 @@ import React from "react";
 import PropTypes from "prop-types";
 
 function Input(props) {
+  function onChange(e) {
+    return props.onChange(e);
+  }
+
   return (
     <input
-      className="Input"
+      className={`Input ${props.theme}`}
       id={props.id}
       value={props.value}
       name={props.name}
       type={props.type}
       placeholder={props.placeholder}
       autoFocus={props.focused}
-      onChange={props.onChange}
+      onChange={onChange}
     />
   );
 }
 
 Input.propTypes = {
+  theme: PropTypes.string,
   id: PropTypes.string,
   value: PropTypes.node.isRequired,
   name: PropTypes.string,

@@ -47,6 +47,7 @@ function TodoItemForm(props) {
             id="expiration"
             value={item.expiration}
             name="expiration"
+            type="time"
             onChange={onChange}
           />
         }

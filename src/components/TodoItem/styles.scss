@@ -1,7 +1,9 @@
 .TodoItem {
   display: flex;
+  position: relative;
 
   & > div {
+    min-width: 80px;
     margin-right: 20px;
     &:last-child {
       margin-right: 0;
@@ -15,5 +17,15 @@
   & > button > img {
     width: 100%;
     height: 100%;
+  }
+
+  &.line-through::after {
+    content: "";
+    position: absolute;
+    width: 110%;
+    height: 1px;
+    background-color: #000;
+    top: 50%;
+    left: -5%;
   }
 }
