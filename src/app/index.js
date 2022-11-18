@@ -79,7 +79,7 @@ function App() {
         description: "",
         expiration: "",
         isComplete: false,
-        file: null,
+        file: "",
       });
     }, []),
     editItem: useCallback((item) => {
@@ -96,7 +96,6 @@ function App() {
     ),
     submit: useCallback(
       async (item) => {
-        setIsLoading(true);
         /** Если прикреплённый файл был изменён */
         if (item.file instanceof File) {
           const url = await callbacks.uploadFile(item.file);
@@ -113,30 +112,37 @@ function App() {
     uploadFile: useCallback(
       async (file) => {
         try {
+          setIsLoading(true);
           const ref = storageRef(storage, file.name);
           await uploadBytes(ref, file);
           const url = await getDownloadURL(ref);
           return url;
         } catch (e) {
           alert(e);
+        } finally {
+          setIsLoading(false);
         }
       },
       [storage]
     ),
     pushNewItem: useCallback(
       (item) => {
+        setIsLoading(true);
         push(ref(db, "todo-items/"), item)
           .catch((e) => {
             alert(e);
           })
           .finally(() => {
             setTodoItem(null);
+            setIsLoading(false);
           });
       },
       [db]
     ),
     updateItem: useCallback(
       (item) => {
+        setIsLoading(true);
+        console.log(item);
         set(ref(db, "todo-items/" + item.id), {
           title: item.title,
           description: item.description,
@@ -149,6 +155,7 @@ function App() {
           })
           .finally(() => {
             setTodoItem(null);
+            setIsLoading(false);
           });
       },
       [db]
@@ -165,10 +172,11 @@ function App() {
             item={item}
             onEdit={callbacks.editItem}
             onRemove={callbacks.removeItem}
+            disableBtn={!!todoItem}
           />
         );
       },
-      [callbacks.editItem, callbacks.removeItem]
+      [callbacks.editItem, callbacks.removeItem, todoItem]
     ),
   };
 
@@ -177,7 +185,9 @@ function App() {
       {!isLoading ? (
         <>
           {todoList && <List items={todoList} renderItem={renders.TodoItem} />}
-          <Button onClick={() => callbacks.addNewItem()}>Добавить</Button>
+          <Button onClick={() => callbacks.addNewItem()} disabled={!!todoItem}>
+            Add
+          </Button>
           {todoItem && (
             <TodoItemForm
               item={todoItem}

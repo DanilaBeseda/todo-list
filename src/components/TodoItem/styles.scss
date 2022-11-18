@@ -1,31 +1,42 @@
 .TodoItem {
   display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
 
   & > div {
-    min-width: 80px;
     margin-right: 20px;
+    padding: 0 10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
     &:last-child {
       margin-right: 0;
     }
   }
 
-  &__edit {
-    margin-right: 15px;
+  &__title {
+    width: 150px;
   }
 
-  & > button > img {
-    width: 100%;
-    height: 100%;
+  &__description {
+    width: 400px;
+  }
+
+  &__expiration {
+    width: 60px;
+  }
+
+  &__file {
+    width: 100px;
   }
 
   &.line-through::after {
     content: "";
     position: absolute;
-    width: 110%;
+    width: 850px;
     height: 1px;
     background-color: #000;
     top: 50%;
-    left: -5%;
+    left: 0px;
   }
 }

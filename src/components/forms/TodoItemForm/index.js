@@ -4,6 +4,8 @@ import LayoutField from "../../layouts/LayoutField";
 import Button from "../../elements/Button";
 import PropTypes from "prop-types";
 
+import "./styles.scss";
+
 function TodoItemForm(props) {
   const [item, setItem] = useState(props.item);
 
@@ -13,12 +15,13 @@ function TodoItemForm(props) {
   }
 
   function onChange(e) {
+    const target = e.target;
     /** Для файлов */
-    if (e.target.type === "file") {
-      setItem({ ...item, [e.target.name]: e.target.files[0] });
+    if (target.type === "file" && target.value) {
+      setItem({ ...item, [target.name]: target.files[0] });
       return;
     }
-    setItem({ ...item, [e.target.name]: e.target.value });
+    setItem({ ...item, [target.name]: target.value });
   }
 
   return (
@@ -61,20 +64,12 @@ function TodoItemForm(props) {
         label={"file"}
         input={<Input id="file" name="file" type="file" onChange={onChange} />}
       />
-      <LayoutField
-        input={
-          <Button theme="small green" type="submit">
-            Принять
-          </Button>
-        }
-      />
-      <LayoutField
-        input={
-          <Button theme="small red" type="button" onClick={props.onCancel}>
-            Отменить
-          </Button>
-        }
-      />
+      <Button theme="small green" type="submit">
+        Accept
+      </Button>
+      <Button theme="small red" type="button" onClick={props.onCancel}>
+        Cancel
+      </Button>
     </form>
   );
 }

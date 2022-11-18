@@ -1,0 +1,10 @@
+.TodoItemForm {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  background-color: #4d4d4d;
+  padding: 20px 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}

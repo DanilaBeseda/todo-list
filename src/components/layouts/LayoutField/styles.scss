@@ -1,0 +1,13 @@
+.LayoutField {
+  margin-bottom: 10px;
+  color: #fff;
+  &__label {
+    text-transform: uppercase;
+  }
+  &__input {
+    & > input {
+      width: 250px;
+      height: 20px;
+    }
+  }
+}

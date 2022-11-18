@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import "./styles.scss";
+
 function Input(props) {
   function onChange(e) {
     return props.onChange(e);
