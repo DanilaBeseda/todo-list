@@ -13,6 +13,11 @@ function TodoItemForm(props) {
   }
 
   function onChange(e) {
+    /** Для файлов */
+    if (e.target.type === "file") {
+      setItem({ ...item, [e.target.name]: e.target.files[0] });
+      return;
+    }
     setItem({ ...item, [e.target.name]: e.target.value });
   }
 
@@ -54,9 +59,7 @@ function TodoItemForm(props) {
       />
       <LayoutField
         label={"file"}
-        input={
-          <Input id="file" value={item.file} name="file" onChange={onChange} />
-        }
+        input={<Input id="file" name="file" type="file" onChange={onChange} />}
       />
       <LayoutField
         input={

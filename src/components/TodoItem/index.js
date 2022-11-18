@@ -10,7 +10,11 @@ function TodoItem({ theme, item, onEdit, onRemove }) {
       <div className="TodoItem__title">{item.title}</div>
       <div className="TodoItem__description">{item.description}</div>
       <div className="TodoItem__expiration">{item.expiration}</div>
-      <div className="TodoItem__file">{item.file}</div>
+      {item.file && (
+        <a href={item.file.url} download>
+          {item.file.name}
+        </a>
+      )}
 
       {!item.isComplete && (
         <Button theme="small" onClick={() => onEdit(item)}>

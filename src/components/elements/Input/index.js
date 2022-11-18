@@ -23,7 +23,7 @@ function Input(props) {
 Input.propTypes = {
   theme: PropTypes.string,
   id: PropTypes.string,
-  value: PropTypes.node.isRequired,
+  value: PropTypes.node,
   name: PropTypes.string,
   type: PropTypes.string,
   placeholder: PropTypes.string,

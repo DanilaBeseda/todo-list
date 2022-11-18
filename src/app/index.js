@@ -15,11 +15,18 @@ import {
 import objToArr from "../utils/objToArr";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import {
+  getDownloadURL,
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+} from "firebase/storage";
 
 dayjs.extend(customParseFormat);
 
 function App() {
   const db = getDatabase();
+  const storage = getStorage();
   /** Задержка для проверки todoList на айтемы с истёкшим сроком */
   const timeInterval = 3000;
   /** Выбранный для редактирования todo item */
@@ -37,7 +44,7 @@ function App() {
     });
   }, [db]);
 
-  /** Проверка даты на экспирацию каждые n секунд*/
+  /** Проверка даты на экспирацию каждые n секунд */
   useEffect(() => {
     const intervalId = setInterval(() => {
       const today = dayjs();
@@ -66,20 +73,21 @@ function App() {
 
   /** Колбеки для мемоизации ссылок */
   const callbacks = {
-    add: useCallback(() => {
+    addNewItem: useCallback(() => {
       setTodoItem({
         title: "",
         description: "",
         expiration: "",
         isComplete: false,
-        file: "",
+        file: null,
       });
     }, []),
-    edit: useCallback((item) => {
+    editItem: useCallback((item) => {
       setTodoItem(item);
     }, []),
-    remove: useCallback(
+    removeItem: useCallback(
       (id) => {
+        setIsLoading(true);
         remove(ref(db, "todo-items/" + id)).catch((e) => {
           alert(e);
         });
@@ -87,38 +95,64 @@ function App() {
       [db]
     ),
     submit: useCallback(
-      (item) => {
-        /** Редактируемый item */
-        if (item.id) {
-          set(ref(db, "todo-items/" + item.id), {
-            title: item.title,
-            description: item.description,
-            expiration: item.expiration,
-            isComplete: item.isComplete,
-            file: item.file,
-          })
-            .catch((e) => {
-              alert(e);
-            })
-            .finally(() => {
-              setTodoItem(null);
-            });
-          /** Новый item */
-        } else {
-          push(ref(db, "todo-items/"), item)
-            .catch((e) => {
-              alert(e);
-            })
-            .finally(() => {
-              setTodoItem(null);
-            });
+      async (item) => {
+        setIsLoading(true);
+        /** Если прикреплённый файл был изменён */
+        if (item.file instanceof File) {
+          const url = await callbacks.uploadFile(item.file);
+          item.file = { name: item.file.name, url };
         }
+        /** id == true значит item редактируется, иначе пушится новый */
+        item.id ? callbacks.updateItem(item) : callbacks.pushNewItem(item);
       },
       [db]
     ),
-    cancel: useCallback(() => {
+    cancelChanges: useCallback(() => {
       setTodoItem(null);
     }, []),
+    uploadFile: useCallback(
+      async (file) => {
+        try {
+          const ref = storageRef(storage, file.name);
+          await uploadBytes(ref, file);
+          const url = await getDownloadURL(ref);
+          return url;
+        } catch (e) {
+          alert(e);
+        }
+      },
+      [storage]
+    ),
+    pushNewItem: useCallback(
+      (item) => {
+        push(ref(db, "todo-items/"), item)
+          .catch((e) => {
+            alert(e);
+          })
+          .finally(() => {
+            setTodoItem(null);
+          });
+      },
+      [db]
+    ),
+    updateItem: useCallback(
+      (item) => {
+        set(ref(db, "todo-items/" + item.id), {
+          title: item.title,
+          description: item.description,
+          expiration: item.expiration,
+          isComplete: item.isComplete,
+          file: item.file,
+        })
+          .catch((e) => {
+            alert(e);
+          })
+          .finally(() => {
+            setTodoItem(null);
+          });
+      },
+      [db]
+    ),
   };
 
   /** Функции для рендер пропсов */
@@ -129,12 +163,12 @@ function App() {
           <TodoItem
             theme={item.isComplete ? "line-through" : "default"}
             item={item}
-            onEdit={callbacks.edit}
-            onRemove={callbacks.remove}
+            onEdit={callbacks.editItem}
+            onRemove={callbacks.removeItem}
           />
         );
       },
-      [callbacks.edit, callbacks.remove]
+      [callbacks.editItem, callbacks.removeItem]
     ),
   };
 
@@ -143,12 +177,12 @@ function App() {
       {!isLoading ? (
         <>
           {todoList && <List items={todoList} renderItem={renders.TodoItem} />}
-          <Button onClick={() => callbacks.add()}>Добавить</Button>
+          <Button onClick={() => callbacks.addNewItem()}>Добавить</Button>
           {todoItem && (
             <TodoItemForm
               item={todoItem}
               onSubmit={callbacks.submit}
-              onCancel={callbacks.cancel}
+              onCancel={callbacks.cancelChanges}
             />
           )}
         </>
