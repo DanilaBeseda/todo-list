@@ -6,6 +6,14 @@ import PropTypes from "prop-types";
 
 import "./styles.scss";
 
+/**
+ * Форма для редактирования
+ * @param {object} props
+ * @param {object} props.item - todo item
+ * @param {function} props.onSubmit - отправить форму
+ * @param {function} props.onCancel - отменить изменения в форме
+ * @returns {JSX.Element}
+ */
 function TodoItemForm(props) {
   const [item, setItem] = useState(props.item);
 

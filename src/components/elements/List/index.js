@@ -3,6 +3,13 @@ import PropTypes from "prop-types";
 
 import "./styles.scss";
 
+/**
+ * Глупый компонент - List
+ * @param {object} this.props
+ * @param {object} this.props.items - список todo айтемов
+ * @param {function} this.props.renderItem - рендер пропс
+ * @returns {JSX.Element}
+ */
 function List({ items, renderItem }) {
   return (
     <ul className="List">

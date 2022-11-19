@@ -3,6 +3,11 @@ import PropTypes from "prop-types";
 
 import "./styles.scss";
 
+/**
+ * Глупый компонент - Button
+ * @param {object} props
+ * @returns {JSX.Element}
+ */
 function Button(props) {
   return (
     <button

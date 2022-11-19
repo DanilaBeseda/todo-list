@@ -3,6 +3,11 @@ import PropTypes from "prop-types";
 
 import "./styles.scss";
 
+/**
+ * Глупый компонент - Input
+ * @param {object} props
+ * @returns {JSX.Element}
+ */
 function Input(props) {
   function onChange(e) {
     return props.onChange(e);

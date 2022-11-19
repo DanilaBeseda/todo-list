@@ -3,6 +3,13 @@ import PropTypes from "prop-types";
 
 import "./styles.scss";
 
+/**
+ * layout для инпутов
+ * @param {object} props
+ * @param {string} props.label - label для инпута
+ * @param {object} props.input - Input компонент
+ * @returns {JSX.Element}
+ */
 function LayoutField({ label, input }) {
   return (
     <div className="LayoutField">

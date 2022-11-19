@@ -24,14 +24,22 @@ import {
 
 dayjs.extend(customParseFormat);
 
+/**
+ * Мэйн страница (умный компонент)
+ * @returns {JSX.Element}
+ */
 function App() {
+  /** Realtime db */
   const db = getDatabase();
+  /** Cloud storage */
   const storage = getStorage();
   /** Задержка для проверки todoList на айтемы с истёкшим сроком */
   const timeInterval = 1000;
   /** Выбранный для редактирования todo item */
   const [todoItem, setTodoItem] = useState(null);
+  /** Список всех todo айтемов */
   const [todoList, setTodoList] = useState(null);
+  /** Состояние загрузки */
   const [isLoading, setIsLoading] = useState(false);
 
   /** Подписка на db */
@@ -73,6 +81,7 @@ function App() {
 
   /** Колбеки для мемоизации ссылок */
   const callbacks = {
+    /** Добавить новый todo item */
     addNewItem: useCallback(() => {
       setTodoItem({
         title: "",
@@ -82,12 +91,14 @@ function App() {
         file: "",
       });
     }, []),
+    /** Редактировать todo item */
     editItem: useCallback(
       (id) => {
         setTodoItem(todoList.find((item) => item.id === id));
       },
       [todoList]
     ),
+    /** Удалить todo item из bd */
     removeItem: useCallback(
       (id) => {
         setIsLoading(true);
@@ -101,6 +112,7 @@ function App() {
       },
       [db]
     ),
+    /** Завершить todo item в bd*/
     completeItem: useCallback(
       (id) => {
         setIsLoading(true);
@@ -114,6 +126,7 @@ function App() {
       },
       [db]
     ),
+    /** Отправить форму */
     submit: useCallback(
       async (item) => {
         /** Если прикреплённый файл был изменён */
@@ -126,9 +139,11 @@ function App() {
       },
       [db]
     ),
+    /** Отменить изменения в форме */
     cancelChanges: useCallback(() => {
       setTodoItem(null);
     }, []),
+    /** Загрузить прикреплённый файл в cloud storage */
     uploadFile: useCallback(
       async (file) => {
         try {
@@ -145,6 +160,7 @@ function App() {
       },
       [storage]
     ),
+    /** Запушить новый todo item в db (метод push генерирует id)*/
     pushNewItem: useCallback(
       (item) => {
         setIsLoading(true);
@@ -159,6 +175,7 @@ function App() {
       },
       [db]
     ),
+    /** Внести изменения в todo item в db */
     updateItem: useCallback(
       (item) => {
         setIsLoading(true);

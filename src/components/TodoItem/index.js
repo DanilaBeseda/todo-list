@@ -4,6 +4,17 @@ import Button from "../elements/Button";
 
 import "./styles.scss";
 
+/**
+ * layout для страниц
+ * @param {object} props
+ * @param {string} props.theme - тема для TodoItem компонента
+ * @param {object} props.item - todo item
+ * @param {function} props.onEdit - редактировать todo item
+ * @param {function} props.onRemove - удалить todo item
+ * @param {function} props.onComplete - завершить todo item
+ * @param {boolean} props.disableBtns - состояние кнопок
+ * @returns {JSX.Element}
+ */
 function TodoItem({ theme, item, onEdit, onRemove, onComplete, disableBtns }) {
   return (
     <div className={`TodoItem ${theme}`}>
