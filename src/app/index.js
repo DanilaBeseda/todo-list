@@ -28,7 +28,7 @@ function App() {
   const db = getDatabase();
   const storage = getStorage();
   /** Задержка для проверки todoList на айтемы с истёкшим сроком */
-  const timeInterval = 3000;
+  const timeInterval = 1000;
   /** Выбранный для редактирования todo item */
   const [todoItem, setTodoItem] = useState(null);
   const [todoList, setTodoList] = useState(null);
@@ -82,15 +82,35 @@ function App() {
         file: "",
       });
     }, []),
-    editItem: useCallback((item) => {
-      setTodoItem(item);
-    }, []),
+    editItem: useCallback(
+      (id) => {
+        setTodoItem(todoList.find((item) => item.id === id));
+      },
+      [todoList]
+    ),
     removeItem: useCallback(
       (id) => {
         setIsLoading(true);
-        remove(ref(db, "todo-items/" + id)).catch((e) => {
-          alert(e);
-        });
+        remove(ref(db, "todo-items/" + id))
+          .catch((e) => {
+            alert(e);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      },
+      [db]
+    ),
+    completeItem: useCallback(
+      (id) => {
+        setIsLoading(true);
+        set(ref(db, `todo-items/${id}/isComplete`), true)
+          .catch((e) => {
+            alert(e);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
       },
       [db]
     ),
@@ -142,7 +162,6 @@ function App() {
     updateItem: useCallback(
       (item) => {
         setIsLoading(true);
-        console.log(item);
         set(ref(db, "todo-items/" + item.id), {
           title: item.title,
           description: item.description,
@@ -172,11 +191,17 @@ function App() {
             item={item}
             onEdit={callbacks.editItem}
             onRemove={callbacks.removeItem}
-            disableBtn={!!todoItem}
+            onComplete={callbacks.completeItem}
+            disableBtns={!!todoItem}
           />
         );
       },
-      [callbacks.editItem, callbacks.removeItem, todoItem]
+      [
+        callbacks.completeItem,
+        callbacks.editItem,
+        callbacks.removeItem,
+        todoItem,
+      ]
     ),
   };
 

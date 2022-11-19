@@ -4,9 +4,16 @@ import Button from "../elements/Button";
 
 import "./styles.scss";
 
-function TodoItem({ theme, item, onEdit, onRemove, disableBtn }) {
+function TodoItem({ theme, item, onEdit, onRemove, onComplete, disableBtns }) {
   return (
     <div className={`TodoItem ${theme}`}>
+      <Button
+        theme="small"
+        disabled={item.isComplete || disableBtns}
+        onClick={() => onComplete(item.id)}
+      >
+        Complete
+      </Button>
       <div className="TodoItem__title">{item.title}</div>
       <div className="TodoItem__description">{item.description}</div>
       <div className="TodoItem__expiration">{item.expiration}</div>
@@ -19,15 +26,15 @@ function TodoItem({ theme, item, onEdit, onRemove, disableBtn }) {
       </div>
       <Button
         theme="small"
-        disabled={item.isComplete || disableBtn}
-        onClick={() => onEdit(item)}
+        disabled={item.isComplete || disableBtns}
+        onClick={() => onEdit(item.id)}
       >
         Edit
       </Button>
 
       <Button
         theme="small red"
-        disabled={disableBtn}
+        disabled={disableBtns}
         onClick={() => onRemove(item.id)}
       >
         Remove
@@ -41,7 +48,8 @@ TodoItem.propTypes = {
   item: PropTypes.object.isRequired,
   onEdit: PropTypes.func.isRequired,
   onRemove: PropTypes.func.isRequired,
-  disableBtn: PropTypes.bool.isRequired,
+  onComplete: PropTypes.func.isRequired,
+  disableBtns: PropTypes.bool.isRequired,
 };
 
 TodoItem.defaulProps = {
